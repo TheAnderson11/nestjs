@@ -90,4 +90,4 @@ export const users = [
     phone: '+1 (800) 568-2484',
     address: '937 Strickland Avenue, Gracey, American Samoa, 9008',
   },
-]
+];
