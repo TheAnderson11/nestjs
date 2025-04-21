@@ -1,14 +1,19 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { SequelizeModule } from '@nestjs/sequelize'
-import configurations from 'src/configurations'
-import { UserModule } from '../user/user.module'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SequelizeModule } from '@nestjs/sequelize';
+import configurations from 'src/configurations';
+import { User } from 'src/modules/users/modules/user.model';
+import { AuthModule } from '../auth/auth.module';
+import { TokenModule } from '../token/token.module';
+import { UsersModule } from '../users/users.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
-    UserModule,
+    UsersModule,
+    AuthModule,
+    TokenModule,
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -21,7 +26,7 @@ import { AppService } from './app.service'
         database: configService.get('db_name'),
         synchronize: true,
         autoLoadModels: true,
-        models: [],
+        models: [User],
       }),
     }),
     ConfigModule.forRoot({ isGlobal: true, load: [configurations] }),
