@@ -15,32 +15,42 @@ export class AuthService {
   ) {}
 
   async registerUsers(dto: CreateUserDto): Promise<CreateUserDto> {
-    const existUser = await this.userService.findUserByEmail(dto.email);
-    if (existUser) throw new BadRequestException(AppError.USER_EXIST);
-    return this.userService.createUser(dto);
+    try {
+      const existUser = await this.userService.findUserByEmail(dto.email);
+      if (existUser) throw new BadRequestException(AppError.USER_EXIST);
+      return this.userService.createUser(dto);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
   }
 
   async loginUsers(dto: UserLoginDto): Promise<AuthUserResponse> {
-    const existUser = await this.userService.findUserByEmail(dto.email);
+    try {
+      const existUser = await this.userService.findUserByEmail(dto.email);
 
-    if (!existUser) throw new BadRequestException(AppError.USER_NOT_FOUND);
-    const validatePassword = await bcrypt.compare(
-      dto.password,
-      existUser.password,
-    );
-    if (!validatePassword) throw new BadRequestException(AppError.WRONG_DATA);
+      if (!existUser) throw new BadRequestException(AppError.USER_NOT_FOUND);
+      const validatePassword = await bcrypt.compare(
+        dto.password,
+        existUser.password,
+      );
+      if (!validatePassword) throw new BadRequestException(AppError.WRONG_DATA);
 
-    const user = await this.userService.publicUser(dto.email);
+      const user = await this.userService.publicUser(dto.email);
 
-    if (!user) {
-      throw new BadRequestException(AppError.USER_NOT_FOUND);
+      if (!user) {
+        throw new BadRequestException(AppError.USER_NOT_FOUND);
+      }
+      const payload = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+      };
+      const token = await this.tokenService.generalJwtToken(payload);
+      return { user, token };
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
     }
-    const payload = {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-    };
-    const token = await this.tokenService.generalJwtToken(payload);
-    return { user, token };
   }
 }
