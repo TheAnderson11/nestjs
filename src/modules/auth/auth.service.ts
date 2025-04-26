@@ -1,12 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AppError } from 'src/common/constants/errors';
-import { JwtPayload } from 'src/common/interfaces/JwtPayload';
 import { TokenService } from '../token/token.service';
 import { CreateUserDto } from '../users/dto';
 import { UserService } from '../users/users.service';
 import { UserLoginDto } from './dto';
-import { AuthUserResponse } from './response';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +19,7 @@ export class AuthService {
     return this.userService.createUser(dto);
   }
 
-  async loginUsers(dto: UserLoginDto): Promise<AuthUserResponse> {
+  async loginUsers(dto: UserLoginDto): Promise<any> {
     const existUser = await this.userService.findUserByEmail(dto.email);
 
     if (!existUser) throw new BadRequestException(AppError.USER_NOT_FOUND);
@@ -30,14 +28,18 @@ export class AuthService {
       existUser.password,
     );
     if (!validatePassword) throw new BadRequestException(AppError.WRONG_DATA);
-    const userData: JwtPayload = {
-      firstName: existUser.firstName,
-      email: existUser.email,
-    };
-    const token = await this.tokenService.generalJwtToken(userData);
+
     const user = await this.userService.publicUser(dto.email);
-    if (!user?.firstName)
+
+    if (!user) {
       throw new BadRequestException(AppError.USER_NOT_FOUND);
-    return { ...user, token };
+    }
+    const payload = {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+    };
+    const token = await this.tokenService.generalJwtToken(payload);
+    return { user, token };
   }
 }
