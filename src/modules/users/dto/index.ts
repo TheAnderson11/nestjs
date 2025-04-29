@@ -32,3 +32,14 @@ export class UpdateUserDto {
   @IsString()
   email: string;
 }
+
+export class UserResponseDto {
+  @IsString()
+  firstName: string;
+
+  @IsString()
+  userName: string;
+
+  @IsString()
+  email: string;
+}
