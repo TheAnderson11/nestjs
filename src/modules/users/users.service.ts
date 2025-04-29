@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import * as bcrypt from 'bcrypt';
 import { Watchlist } from '../watchlist/models/watchlist.model';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto';
 import { User } from './modules/user.model';
 
 @Injectable()
@@ -29,16 +29,16 @@ export class UserService {
     }
   }
 
-  async createUser(dto: CreateUserDto): Promise<CreateUserDto> {
+  async createUser(dto: CreateUserDto): Promise<UserResponseDto> {
     try {
-      dto.password = await this.hashPassword(dto.password);
-      await this.userRepository.create({
-        firstName: dto.firstName,
-        userName: dto.userName,
-        email: dto.email,
-        password: dto.password,
+      const hashedPassword = await this.hashPassword(dto.password);
+
+      const newUser = await this.userRepository.create({
+        ...dto,
+        password: hashedPassword,
       });
-      return dto;
+      const { firstName, userName, email } = newUser;
+      return { firstName, userName, email };
     } catch (error) {
       console.log(error);
       throw new Error(error);
