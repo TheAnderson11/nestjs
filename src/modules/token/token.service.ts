@@ -11,7 +11,7 @@ export class TokenService {
   ) {}
 
   async generalJwtToken(payload: JwtPayload): Promise<string> {
-    return await this.jwtService.signAsync(payload, {
+    return this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('secret_jwt'),
       expiresIn: this.configService.get<string>('expire_jwt'),
     });

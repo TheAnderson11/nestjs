@@ -37,8 +37,9 @@ export class UserService {
         ...dto,
         password: hashedPassword,
       });
-      const { firstName, userName, email } = newUser;
-      return { firstName, userName, email };
+      console.log(newUser, 'newUserHERE!');
+      const { password, ...user } = newUser.dataValues;
+      return user;
     } catch (error) {
       console.log(error);
       throw new Error(error);
@@ -47,7 +48,7 @@ export class UserService {
 
   async publicUser(email: string): Promise<User | null> {
     try {
-      return this.userRepository.findOne({
+      const user = await this.userRepository.findOne({
         where: { email },
         attributes: { exclude: ['password'] },
         include: {
@@ -55,6 +56,7 @@ export class UserService {
           required: false,
         },
       });
+      return user;
     } catch (error) {
       console.log(error);
       throw new Error(error);
