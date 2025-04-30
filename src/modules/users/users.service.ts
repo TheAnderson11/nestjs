@@ -16,7 +16,7 @@ export class UserService {
       return bcrypt.hash(password, 10);
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -25,7 +25,7 @@ export class UserService {
       return this.userRepository.findOne({ where: { email } });
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -42,7 +42,7 @@ export class UserService {
       return user;
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -59,7 +59,7 @@ export class UserService {
       return user;
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -69,7 +69,7 @@ export class UserService {
       return dto;
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -79,7 +79,7 @@ export class UserService {
       return true;
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 }

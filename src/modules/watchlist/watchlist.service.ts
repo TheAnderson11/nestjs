@@ -20,7 +20,7 @@ export class WatchlistService {
       return watchlist;
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -32,7 +32,7 @@ export class WatchlistService {
       return true;
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 }
