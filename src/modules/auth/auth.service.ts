@@ -31,7 +31,7 @@ export class AuthService {
       return { user, token };
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -60,7 +60,7 @@ export class AuthService {
       return { user, token };
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
   }
 }
