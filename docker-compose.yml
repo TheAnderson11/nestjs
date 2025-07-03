@@ -12,7 +12,6 @@ services:
       POSTGRES_DB: postgres
     command: postgres
     restart: always
-
   redis:
     image: redis
     container_name: nestjs-redis

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Patch,
   Post,
   Req,
@@ -9,13 +10,21 @@ import {
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-guard';
-import { UpdateUserDto } from './dto';
+import { GetUserDto, UpdateUserDto } from './dto';
 import { UserService } from './users.service';
 
 @ApiTags('API')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @ApiResponse({ status: 200, type: GetUserDto })
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@Req() req): Promise<GetUserDto | null> {
+    const email = req.user.email;
+    return this.userService.publicUser(email);
+  }
 
   @ApiResponse({ status: 200, type: UpdateUserDto })
   @UseGuards(JwtAuthGuard)
